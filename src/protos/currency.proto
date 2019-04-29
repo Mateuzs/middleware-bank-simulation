@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package currency;
+
+// The greeting service definition.
+service CurrencyService {
+  // Sends a greeting
+  rpc getCurrencyRates(CurrencyRequest) returns (stream CurrencyResponse) {}
+}
+
+// The request message containing the user's name.
+message CurrencyRequest {
+    repeated CurrencyType currencies = 1;
+}
+
+// The response message containing the greetings
+message CurrencyResponse {
+  repeated Currency currencies = 1;
+}
+
+message CurrencyType {
+    availableCurrencySet currency = 1;
+}
+
+message Currency {
+    availableCurrencySet currency = 1;
+    double buyRate = 2;
+    double sellRate = 3;
+}
+
+enum availableCurrencySet {
+    PLN = 0;
+    EUR = 1;
+    USD = 2;
+    GBP = 3;
+    HUF = 4;
+    JPY = 5;
+
+}
