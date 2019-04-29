@@ -2,16 +2,14 @@ from thrift.protocol import TBinaryProtocol
 from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift import Thrift
-from account.ttypes import InvalidOperation, Operation, Work
-from Account import Calculator
-import sys
-import glob
-sys.path.append('gen-py')
+
+from account import AccountCreationService
+from account import ttypes
 
 
 def main():
     # Make socket
-    transport = TSocket.TSocket('localhost', 9090)
+    transport = TSocket.TSocket('localhost', 9001)
 
     # Buffering is critical. Raw sockets are very slow
     transport = TTransport.TBufferedTransport(transport)
@@ -20,39 +18,25 @@ def main():
     protocol = TBinaryProtocol.TBinaryProtocol(transport)
 
     # Create a client to use the protocol encoder
-    client = Calculator.Client(protocol)
+    client = AccountCreationService.Client(protocol)
 
     # Connect!
     transport.open()
 
-    client.ping()
-    print('ping()')
-
-    sum_ = client.add(1, 1)
-    print('1+1=%d' % sum_)
-
-    work = Work()
-
-    work.op = Operation.DIVIDE
-    work.num1 = 1
-    work.num2 = 0
+    createAccountRequest = ttypes.CreateAccountRequest()
+    createAccountRequest.name = 'Mat'
+    createAccountRequest.surname = 'Zem'
+    createAccountRequest.pesel = '123456'
+    createAccountRequest.incomeDeclaration = 3000
 
     try:
-        quotient = client.calculate(1, work)
-        print('Whoa? You know how to divide by zero?')
-        print('FYI the answer is %d' % quotient)
-    except InvalidOperation as e:
-        print('InvalidOperation: %r' % e)
-
-    work.op = Operation.SUBTRACT
-    work.num1 = 15
-    work.num2 = 10
-
-    diff = client.calculate(1, work)
-    print('15-10=%d' % diff)
-
-    log = client.getStruct(1)
-    print('Check log: %s' % log.value)
+        response = client.createAccount(createAccountRequest)
+        print(response)
+    except ttypes.UserAlreadyExist as error:
+        print('Error! ' + error.message + ' pesel: ' + error.pesel)
 
     # Close!
     transport.close()
+
+
+main()

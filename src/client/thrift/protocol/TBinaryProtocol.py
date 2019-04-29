@@ -41,7 +41,8 @@ class TBinaryProtocol(TProtocolBase):
         self.strictRead = strictRead
         self.strictWrite = strictWrite
         self.string_length_limit = kwargs.get('string_length_limit', None)
-        self.container_length_limit = kwargs.get('container_length_limit', None)
+        self.container_length_limit = kwargs.get(
+            'container_length_limit', None)
 
     def _check_string_length(self, length):
         self._check_length(self.string_length_limit, length)
@@ -240,7 +241,8 @@ class TBinaryProtocolFactory(object):
         self.strictRead = strictRead
         self.strictWrite = strictWrite
         self.string_length_limit = kwargs.get('string_length_limit', None)
-        self.container_length_limit = kwargs.get('container_length_limit', None)
+        self.container_length_limit = kwargs.get(
+            'container_length_limit', None)
 
     def getProtocol(self, trans):
         prot = TBinaryProtocol(trans, self.strictRead, self.strictWrite,

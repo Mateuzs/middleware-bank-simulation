@@ -392,7 +392,8 @@ class TProtocolBase(object):
     def _write_by_ttype(self, ttype, vals, spec, espec):
         _, writer_name, is_container = self._ttype_handlers(ttype, espec)
         writer_func = getattr(self, writer_name)
-        write = (lambda v: writer_func(v, espec)) if is_container else writer_func
+        write = (lambda v: writer_func(v, espec)
+                 ) if is_container else writer_func
         for v in vals:
             yield write(v)
 
