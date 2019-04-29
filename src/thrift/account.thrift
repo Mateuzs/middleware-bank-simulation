@@ -12,7 +12,7 @@ struct Account {
   6: i64 balance
 }
 
-struct createAccountRequest {
+struct CreateAccountRequest {
     1: string name,
     2: string surname,
     3: string pesel,
@@ -24,23 +24,33 @@ struct AccountCreatedResponse {
     2: string password
 }
 
-exception userDoNotExist {
-    string pesel,
-    string message
+struct AuthorisationData {
+    1: string pesel,
+    2: string password, 
 }
 
-exception userAlreadyExist {
-    string pesel,
-    string message
+exception UserDoNotExist {
+   1: string pesel,
+   2: string message
+}
+
+exception UserAlreadyExist {
+   1: string pesel,
+   2: string message
 }
 
 exception InvalidPassword {
-    string pesel,
-    string message
+   1: string pesel,
+   2: string message
 }
 
-service AccountMaintenance{
-    User createUser(1: createUserRequest) throws userAlreadyExist,
+service AccountCreationService{
+    AccountCreatedResponse createAccount(1: CreateAccountRequest createAccountRequest) throws (1: UserAlreadyExist error),
+}
 
+service PremiumAccountManagenent{
+} 
 
+service StandardAccountManagement {
+    Account checkAccountState(1: AuthorisationData authorisationData) throws (1: UserDoNotExist userDoNotExistError, 2: InvalidPassword invalidPassworderror),
 }
