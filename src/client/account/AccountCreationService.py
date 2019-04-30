@@ -12,7 +12,7 @@ from thrift.TRecursive import fix_spec
 
 import sys
 import logging
-from account.ttypes import *
+from .ttypes import *
 from thrift.Thrift import TProcessor
 from thrift.transport import TTransport
 all_structs = []
@@ -45,8 +45,7 @@ class Client(Iface):
         return self.recv_createAccount()
 
     def send_createAccount(self, createAccountRequest):
-        self._oprot.writeMessageBegin(
-            'createAccount', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin('createAccount', TMessageType.CALL, self._seqid)
         args = createAccount_args()
         args.createAccountRequest = createAccountRequest
         args.write(self._oprot)
@@ -66,10 +65,9 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
-        if result.error is not None:
-            raise result.error
-        raise TApplicationException(
-            TApplicationException.MISSING_RESULT, "createAccount failed: unknown result")
+        if result.userAlreadyExistException is not None:
+            raise result.userAlreadyExistException
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "createAccount failed: unknown result")
 
 
 class Processor(Iface, TProcessor):
@@ -83,8 +81,7 @@ class Processor(Iface, TProcessor):
         if name not in self._processMap:
             iprot.skip(TType.STRUCT)
             iprot.readMessageEnd()
-            x = TApplicationException(
-                TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
+            x = TApplicationException(TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
             oprot.writeMessageBegin(name, TMessageType.EXCEPTION, seqid)
             x.write(oprot)
             oprot.writeMessageEnd()
@@ -100,14 +97,13 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = createAccount_result()
         try:
-            result.success = self._handler.createAccount(
-                args.createAccountRequest)
+            result.success = self._handler.createAccount(args.createAccountRequest)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
-        except UserAlreadyExist as error:
+        except UserAlreadyExistException as userAlreadyExistException:
             msg_type = TMessageType.REPLY
-            result.error = error
+            result.userAlreadyExistException = userAlreadyExistException
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -115,8 +111,7 @@ class Processor(Iface, TProcessor):
         except Exception:
             logging.exception('Unexpected exception in handler')
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(
-                TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("createAccount", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -131,6 +126,7 @@ class createAccount_args(object):
      - createAccountRequest
 
     """
+
 
     def __init__(self, createAccountRequest=None,):
         self.createAccountRequest = createAccountRequest
@@ -157,8 +153,7 @@ class createAccount_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(
-                self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('createAccount_args')
         if self.createAccountRequest is not None:
@@ -181,13 +176,10 @@ class createAccount_args(object):
 
     def __ne__(self, other):
         return not (self == other)
-
-
 all_structs.append(createAccount_args)
 createAccount_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'createAccountRequest', [
-     CreateAccountRequest, None], None, ),  # 1
+    (1, TType.STRUCT, 'createAccountRequest', [CreateAccountRequest, None], None, ),  # 1
 )
 
 
@@ -195,13 +187,14 @@ class createAccount_result(object):
     """
     Attributes:
      - success
-     - error
+     - userAlreadyExistException
 
     """
 
-    def __init__(self, success=None, error=None,):
+
+    def __init__(self, success=None, userAlreadyExistException=None,):
         self.success = success
-        self.error = error
+        self.userAlreadyExistException = userAlreadyExistException
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -220,8 +213,8 @@ class createAccount_result(object):
                     iprot.skip(ftype)
             elif fid == 1:
                 if ftype == TType.STRUCT:
-                    self.error = UserAlreadyExist()
-                    self.error.read(iprot)
+                    self.userAlreadyExistException = UserAlreadyExistException()
+                    self.userAlreadyExistException.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -231,17 +224,16 @@ class createAccount_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(
-                self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('createAccount_result')
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRUCT, 0)
             self.success.write(oprot)
             oprot.writeFieldEnd()
-        if self.error is not None:
-            oprot.writeFieldBegin('error', TType.STRUCT, 1)
-            self.error.write(oprot)
+        if self.userAlreadyExistException is not None:
+            oprot.writeFieldBegin('userAlreadyExistException', TType.STRUCT, 1)
+            self.userAlreadyExistException.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -259,12 +251,11 @@ class createAccount_result(object):
 
     def __ne__(self, other):
         return not (self == other)
-
-
 all_structs.append(createAccount_result)
 createAccount_result.thrift_spec = (
     (0, TType.STRUCT, 'success', [AccountCreatedResponse, None], None, ),  # 0
-    (1, TType.STRUCT, 'error', [UserAlreadyExist, None], None, ),  # 1
+    (1, TType.STRUCT, 'userAlreadyExistException', [UserAlreadyExistException, None], None, ),  # 1
 )
 fix_spec(all_structs)
 del all_structs
+

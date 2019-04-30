@@ -4,39 +4,67 @@ from thrift.transport import TSocket
 from thrift import Thrift
 
 from account import AccountCreationService
+from account import StandardAccountManagementService
+from account import PremiumAccountManagenentService
 from account import ttypes
+
+accountType = ttypes.AccountType
 
 
 def main():
-    # Make socket
-    transport = TSocket.TSocket('localhost', 9001)
 
-    # Buffering is critical. Raw sockets are very slow
-    transport = TTransport.TBufferedTransport(transport)
-
-    # Wrap in a protocol
-    protocol = TBinaryProtocol.TBinaryProtocol(transport)
-
-    # Create a client to use the protocol encoder
-    client = AccountCreationService.Client(protocol)
-
-    # Connect!
-    transport.open()
+    name = 'Mat'
+    surname = 'Zem'
+    pesel = '123456'
+    incomeDeclaration = 3000
+    password = ''
 
     createAccountRequest = ttypes.CreateAccountRequest()
-    createAccountRequest.name = 'Mat'
-    createAccountRequest.surname = 'Zem'
-    createAccountRequest.pesel = '123456'
-    createAccountRequest.incomeDeclaration = 3000
+    createAccountRequest.name = name
+    createAccountRequest.surname = surname
+    createAccountRequest.pesel = pesel
+    createAccountRequest.incomeDeclaration = incomeDeclaration
 
     try:
+        transport = TSocket.TSocket('localhost', 9001)
+        transport = TTransport.TBufferedTransport(transport)
+        transport.open()
+
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        client = AccountCreationService.Client(protocol)
+
         response = client.createAccount(createAccountRequest)
         print(response)
-    except ttypes.UserAlreadyExist as error:
-        print('Error! ' + error.message + ' pesel: ' + error.pesel)
+        transport.close()
+        if response.accountType == accountType.STANDARD:
+            try:
+                password = response.password
 
-    # Close!
-    transport.close()
+                authorisationData = ttypes.AuthorisationData()
+                authorisationData.pesel = pesel
+                authorisationData.password = password
+                transport = TSocket.TSocket('localhost', 9002)
+                transport = TTransport.TBufferedTransport(transport)
+                transport.open()
+
+                protocol = TBinaryProtocol.TBinaryProtocol(transport)
+                client = StandardAccountManagementService.Client(protocol)
+                response = client.checkAccountState(
+                    authorisationData)
+                print(response)
+
+                transport.close()
+
+            except ttypes.InvalidPasswordException as exception:
+                print('user ' + exception.pesel + ' ' + exception.message)
+                transport.close()
+
+        else:
+            print('nothing')
+
+    except ttypes.UserAlreadyExistException as exception:
+        print('Error! ' + exception.message + ' pesel: ' + exception.pesel)
+        transport.close()
 
 
 main()

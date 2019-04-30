@@ -16,6 +16,6 @@ export default class AccountStorage {
   }
 
   public getAccountState(pesel: string): AccountObject {
-    return this.database.pesel;
+    return this.database[pesel];
   }
 }

@@ -16,7 +16,7 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from account import PremiumAccountManagenent
+from account import StandardAccountManagementService
 from account.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
@@ -24,6 +24,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
+    print('  Account checkAccountState(AuthorisationData authorisationData)')
     print('')
     sys.exit(0)
 
@@ -100,7 +101,17 @@ else:
     else:
         transport = TTransport.TBufferedTransport(socket)
 protocol = TBinaryProtocol(transport)
-client = PremiumAccountManagenent.Client(protocol)
+client = StandardAccountManagementService.Client(protocol)
 transport.open()
+
+if cmd == 'checkAccountState':
+    if len(args) != 1:
+        print('checkAccountState requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.checkAccountState(eval(args[0]),))
+
+else:
+    print('Unrecognized method %s' % cmd)
+    sys.exit(1)
 
 transport.close()

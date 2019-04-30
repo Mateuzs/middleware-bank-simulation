@@ -6,15 +6,15 @@
 #  options string: py
 #
 
-from ..thrift.Thrift import TType, TMessageType, TFrozenDict, TException, TApplicationException
-from ..thrift.protocol.TProtocol import TProtocolException
-from ..thrift.TRecursive import fix_spec
+from thrift.Thrift import TType, TMessageType, TFrozenDict, TException, TApplicationException
+from thrift.protocol.TProtocol import TProtocolException
+from thrift.TRecursive import fix_spec
 
 import sys
 import logging
 from .ttypes import *
-from ..thrift.Thrift import TProcessor
-from ..thrift.transport import TTransport
+from thrift.Thrift import TProcessor
+from thrift.transport import TTransport
 all_structs = []
 
 
@@ -45,8 +45,7 @@ class Client(Iface):
         return self.recv_checkAccountState()
 
     def send_checkAccountState(self, authorisationData):
-        self._oprot.writeMessageBegin(
-            'checkAccountState', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin('checkAccountState', TMessageType.CALL, self._seqid)
         args = checkAccountState_args()
         args.authorisationData = authorisationData
         args.write(self._oprot)
@@ -66,12 +65,11 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
-        if result.userDoNotExistError is not None:
-            raise result.userDoNotExistError
-        if result.invalidPassworderror is not None:
-            raise result.invalidPassworderror
-        raise TApplicationException(
-            TApplicationException.MISSING_RESULT, "checkAccountState failed: unknown result")
+        if result.userDoNotExistException is not None:
+            raise result.userDoNotExistException
+        if result.invalidPasswordExcpetion is not None:
+            raise result.invalidPasswordExcpetion
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "checkAccountState failed: unknown result")
 
 
 class Processor(Iface, TProcessor):
@@ -85,8 +83,7 @@ class Processor(Iface, TProcessor):
         if name not in self._processMap:
             iprot.skip(TType.STRUCT)
             iprot.readMessageEnd()
-            x = TApplicationException(
-                TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
+            x = TApplicationException(TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
             oprot.writeMessageBegin(name, TMessageType.EXCEPTION, seqid)
             x.write(oprot)
             oprot.writeMessageEnd()
@@ -102,17 +99,16 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = checkAccountState_result()
         try:
-            result.success = self._handler.checkAccountState(
-                args.authorisationData)
+            result.success = self._handler.checkAccountState(args.authorisationData)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
-        except UserDoNotExist as userDoNotExistError:
+        except UserDoNotExistException as userDoNotExistException:
             msg_type = TMessageType.REPLY
-            result.userDoNotExistError = userDoNotExistError
-        except InvalidPassword as invalidPassworderror:
+            result.userDoNotExistException = userDoNotExistException
+        except InvalidPasswordException as invalidPasswordExcpetion:
             msg_type = TMessageType.REPLY
-            result.invalidPassworderror = invalidPassworderror
+            result.invalidPasswordExcpetion = invalidPasswordExcpetion
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -120,8 +116,7 @@ class Processor(Iface, TProcessor):
         except Exception:
             logging.exception('Unexpected exception in handler')
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(
-                TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("checkAccountState", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -136,6 +131,7 @@ class checkAccountState_args(object):
      - authorisationData
 
     """
+
 
     def __init__(self, authorisationData=None,):
         self.authorisationData = authorisationData
@@ -162,8 +158,7 @@ class checkAccountState_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(
-                self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('checkAccountState_args')
         if self.authorisationData is not None:
@@ -186,13 +181,10 @@ class checkAccountState_args(object):
 
     def __ne__(self, other):
         return not (self == other)
-
-
 all_structs.append(checkAccountState_args)
 checkAccountState_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'authorisationData', [
-     AuthorisationData, None], None, ),  # 1
+    (1, TType.STRUCT, 'authorisationData', [AuthorisationData, None], None, ),  # 1
 )
 
 
@@ -200,15 +192,16 @@ class checkAccountState_result(object):
     """
     Attributes:
      - success
-     - userDoNotExistError
-     - invalidPassworderror
+     - userDoNotExistException
+     - invalidPasswordExcpetion
 
     """
 
-    def __init__(self, success=None, userDoNotExistError=None, invalidPassworderror=None,):
+
+    def __init__(self, success=None, userDoNotExistException=None, invalidPasswordExcpetion=None,):
         self.success = success
-        self.userDoNotExistError = userDoNotExistError
-        self.invalidPassworderror = invalidPassworderror
+        self.userDoNotExistException = userDoNotExistException
+        self.invalidPasswordExcpetion = invalidPasswordExcpetion
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -227,14 +220,14 @@ class checkAccountState_result(object):
                     iprot.skip(ftype)
             elif fid == 1:
                 if ftype == TType.STRUCT:
-                    self.userDoNotExistError = UserDoNotExist()
-                    self.userDoNotExistError.read(iprot)
+                    self.userDoNotExistException = UserDoNotExistException()
+                    self.userDoNotExistException.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.invalidPassworderror = InvalidPassword()
-                    self.invalidPassworderror.read(iprot)
+                    self.invalidPasswordExcpetion = InvalidPasswordException()
+                    self.invalidPasswordExcpetion.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -244,21 +237,20 @@ class checkAccountState_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(
-                self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('checkAccountState_result')
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRUCT, 0)
             self.success.write(oprot)
             oprot.writeFieldEnd()
-        if self.userDoNotExistError is not None:
-            oprot.writeFieldBegin('userDoNotExistError', TType.STRUCT, 1)
-            self.userDoNotExistError.write(oprot)
+        if self.userDoNotExistException is not None:
+            oprot.writeFieldBegin('userDoNotExistException', TType.STRUCT, 1)
+            self.userDoNotExistException.write(oprot)
             oprot.writeFieldEnd()
-        if self.invalidPassworderror is not None:
-            oprot.writeFieldBegin('invalidPassworderror', TType.STRUCT, 2)
-            self.invalidPassworderror.write(oprot)
+        if self.invalidPasswordExcpetion is not None:
+            oprot.writeFieldBegin('invalidPasswordExcpetion', TType.STRUCT, 2)
+            self.invalidPasswordExcpetion.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -276,15 +268,12 @@ class checkAccountState_result(object):
 
     def __ne__(self, other):
         return not (self == other)
-
-
 all_structs.append(checkAccountState_result)
 checkAccountState_result.thrift_spec = (
     (0, TType.STRUCT, 'success', [Account, None], None, ),  # 0
-    (1, TType.STRUCT, 'userDoNotExistError',
-     [UserDoNotExist, None], None, ),  # 1
-    (2, TType.STRUCT, 'invalidPassworderror',
-     [InvalidPassword, None], None, ),  # 2
+    (1, TType.STRUCT, 'userDoNotExistException', [UserDoNotExistException, None], None, ),  # 1
+    (2, TType.STRUCT, 'invalidPasswordExcpetion', [InvalidPasswordException, None], None, ),  # 2
 )
 fix_spec(all_structs)
 del all_structs
+

@@ -2,20 +2,16 @@ import {
   AccountType,
   CreateAccountRequest,
   AccountCreatedResponse
-} from "../types/accountCreationService";
+} from "../types/accountService";
 import AccountStorage from "./AccountStorage";
 import { AccountObject } from "../types/AccountStorage";
 
-export default function launchAccountCreationService(
-  port: number,
+export default function accountCreatonServiceHandler(
   accountStorage: AccountStorage
 ) {
-  const thrift = require("thrift");
-  const AccountCreationService = require("../thrift/gen-nodejs/AccountCreationService");
-  const ttypes = require("../thrift/gen-nodejs/account_types");
-
-  const server = thrift.createServer(AccountCreationService, {
+  return {
     createAccount: function(createAccountRequest: CreateAccountRequest) {
+      const ttypes = require("../thrift/gen-nodejs/account_types");
       console.log("registration started..");
 
       if (accountStorage.checkAccountExistence(createAccountRequest.pesel)) {
@@ -40,12 +36,11 @@ export default function launchAccountCreationService(
 
       const accountCreatedResponse: AccountCreatedResponse = new ttypes.AccountCreatedResponse();
 
-      accountCreatedResponse.success = "success!";
+      accountCreatedResponse.confirmationMessage = "success!";
+      accountCreatedResponse.accountType = userAccount.accountType;
       accountCreatedResponse.password = userAccount.password;
 
       return accountCreatedResponse;
     }
-  });
-
-  server.listen(port);
+  };
 }

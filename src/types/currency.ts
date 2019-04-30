@@ -10,11 +10,9 @@ export const enum availableCurrencyType {
 export interface CurrencyTypes {
   currencies: CurrencyType[];
 }
-
 export interface CurrencyType {
   currency: availableCurrencyType;
 }
-
 export interface Currency {
   currency: availableCurrencyType;
   sellRate: number;

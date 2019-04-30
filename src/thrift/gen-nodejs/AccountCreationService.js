@@ -66,17 +66,17 @@ AccountCreationService_createAccount_args.prototype.write = function(output) {
 
 var AccountCreationService_createAccount_result = function(args) {
   this.success = null;
-  this.error = null;
-  if (args instanceof ttypes.UserAlreadyExist) {
-    this.error = args;
+  this.userAlreadyExistException = null;
+  if (args instanceof ttypes.UserAlreadyExistException) {
+    this.userAlreadyExistException = args;
     return;
   }
   if (args) {
     if (args.success !== undefined && args.success !== null) {
       this.success = new ttypes.AccountCreatedResponse(args.success);
     }
-    if (args.error !== undefined && args.error !== null) {
-      this.error = args.error;
+    if (args.userAlreadyExistException !== undefined && args.userAlreadyExistException !== null) {
+      this.userAlreadyExistException = args.userAlreadyExistException;
     }
   }
 };
@@ -101,8 +101,8 @@ AccountCreationService_createAccount_result.prototype.read = function(input) {
       break;
       case 1:
       if (ftype == Thrift.Type.STRUCT) {
-        this.error = new ttypes.UserAlreadyExist();
-        this.error.read(input);
+        this.userAlreadyExistException = new ttypes.UserAlreadyExistException();
+        this.userAlreadyExistException.read(input);
       } else {
         input.skip(ftype);
       }
@@ -123,9 +123,9 @@ AccountCreationService_createAccount_result.prototype.write = function(output) {
     this.success.write(output);
     output.writeFieldEnd();
   }
-  if (this.error !== null && this.error !== undefined) {
-    output.writeFieldBegin('error', Thrift.Type.STRUCT, 1);
-    this.error.write(output);
+  if (this.userAlreadyExistException !== null && this.userAlreadyExistException !== undefined) {
+    output.writeFieldBegin('userAlreadyExistException', Thrift.Type.STRUCT, 1);
+    this.userAlreadyExistException.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -196,8 +196,8 @@ AccountCreationServiceClient.prototype.recv_createAccount = function(input,mtype
   result.read(input);
   input.readMessageEnd();
 
-  if (null !== result.error) {
-    return callback(result.error);
+  if (null !== result.userAlreadyExistException) {
+    return callback(result.userAlreadyExistException);
   }
   if (null !== result.success) {
     return callback(null, result.success);
@@ -236,7 +236,7 @@ AccountCreationServiceProcessor.prototype.process_createAccount = function(seqid
       output.flush();
     }).catch(function (err) {
       var result;
-      if (err instanceof ttypes.UserAlreadyExist) {
+      if (err instanceof ttypes.UserAlreadyExistException) {
         result = new AccountCreationService_createAccount_result(err);
         output.writeMessageBegin("createAccount", Thrift.MessageType.REPLY, seqid);
       } else {
@@ -250,7 +250,7 @@ AccountCreationServiceProcessor.prototype.process_createAccount = function(seqid
   } else {
     this._handler.createAccount(args.createAccountRequest, function (err, result) {
       var result_obj;
-      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.UserAlreadyExist) {
+      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.UserAlreadyExistException) {
         result_obj = new AccountCreationService_createAccount_result((err !== null || typeof err === 'undefined') ? err : {success: result});
         output.writeMessageBegin("createAccount", Thrift.MessageType.REPLY, seqid);
       } else {

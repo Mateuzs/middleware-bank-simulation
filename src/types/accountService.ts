@@ -11,6 +11,12 @@ export interface CreateAccountRequest {
 }
 
 export interface AccountCreatedResponse {
-  success: string;
+  confirmationMessage: string;
+  accountType: AccountType;
+  password: string;
+}
+
+export interface AuthorisationData {
+  pesel: string;
   password: string;
 }
