@@ -2,13 +2,18 @@ import {
   CurrencyType,
   availableCurrencyType,
   Currency,
-  CurrencyTypes
+  CurrencyTypes,
+  CurrencyRates
 } from "../types/currency";
 
 let currencyRates: Currency[];
 
-export function getFreshCurrencyRate(): Currency[] {
-  return currencyRates;
+export function getFreshCurrencyRate(
+  requiredCurrency: availableCurrencyType
+): Currency {
+  return currencyRates.filter(
+    (currency: Currency) => currency.currency === requiredCurrency
+  )[0];
 }
 
 export function launchCurrencyService(
@@ -20,7 +25,7 @@ export function launchCurrencyService(
   const protoLoader = require("@grpc/proto-loader");
 
   const PROTO_PATH = __dirname + "/../protos/currency.proto";
-  // Suggested options for similarity to existing grpc.load behavior
+
   const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
     longs: String,
@@ -29,7 +34,6 @@ export function launchCurrencyService(
     oneofs: true
   });
   const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-  // The protoDescriptor object has the full package hierarchy
 
   const currency = protoDescriptor.currency;
 
@@ -60,11 +64,12 @@ export function launchCurrencyService(
   }
 
   const stream = client.getCurrencyRates(requiredCurrency);
-  stream.on("data", (newCurrencyRates: Currency[]) => {
+
+  stream.on("data", (newCurrencyRates: CurrencyRates) => {
     console.log(newCurrencyRates);
-    currencyRates = newCurrencyRates;
+    currencyRates = newCurrencyRates.currencies;
   });
   stream.on("end", () => console.log("CurrencyService has ended!"));
-  stream.on("error", e => console.log(e));
-  stream.on("status", status => console.log(status));
+  stream.on("error", (e: Error) => console.log(e));
+  stream.on("status", (status: object) => console.log(status));
 }

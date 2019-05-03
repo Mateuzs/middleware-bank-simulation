@@ -11,6 +11,7 @@ from thrift.protocol.TProtocol import TProtocolException
 from thrift.TRecursive import fix_spec
 
 import sys
+import account.StandardAccountManagementService
 import logging
 from .ttypes import *
 from thrift.Thrift import TProcessor
@@ -18,15 +19,7 @@ from thrift.transport import TTransport
 all_structs = []
 
 
-class Iface(object):
-    def checkAccountState(self, authorisationData):
-        """
-        Parameters:
-         - authorisationData
-
-        """
-        pass
-
+class Iface(account.StandardAccountManagementService.Iface):
     def requestLoan(self, loanRequest):
         """
         Parameters:
@@ -36,48 +29,9 @@ class Iface(object):
         pass
 
 
-class Client(Iface):
+class Client(account.StandardAccountManagementService.Client, Iface):
     def __init__(self, iprot, oprot=None):
-        self._iprot = self._oprot = iprot
-        if oprot is not None:
-            self._oprot = oprot
-        self._seqid = 0
-
-    def checkAccountState(self, authorisationData):
-        """
-        Parameters:
-         - authorisationData
-
-        """
-        self.send_checkAccountState(authorisationData)
-        return self.recv_checkAccountState()
-
-    def send_checkAccountState(self, authorisationData):
-        self._oprot.writeMessageBegin('checkAccountState', TMessageType.CALL, self._seqid)
-        args = checkAccountState_args()
-        args.authorisationData = authorisationData
-        args.write(self._oprot)
-        self._oprot.writeMessageEnd()
-        self._oprot.trans.flush()
-
-    def recv_checkAccountState(self):
-        iprot = self._iprot
-        (fname, mtype, rseqid) = iprot.readMessageBegin()
-        if mtype == TMessageType.EXCEPTION:
-            x = TApplicationException()
-            x.read(iprot)
-            iprot.readMessageEnd()
-            raise x
-        result = checkAccountState_result()
-        result.read(iprot)
-        iprot.readMessageEnd()
-        if result.success is not None:
-            return result.success
-        if result.userDoNotExistException is not None:
-            raise result.userDoNotExistException
-        if result.InvalidPasswordException is not None:
-            raise result.InvalidPasswordException
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "checkAccountState failed: unknown result")
+        account.StandardAccountManagementService.Client.__init__(self, iprot, oprot)
 
     def requestLoan(self, loanRequest):
         """
@@ -118,11 +72,9 @@ class Client(Iface):
         raise TApplicationException(TApplicationException.MISSING_RESULT, "requestLoan failed: unknown result")
 
 
-class Processor(Iface, TProcessor):
+class Processor(account.StandardAccountManagementService.Processor, Iface, TProcessor):
     def __init__(self, handler):
-        self._handler = handler
-        self._processMap = {}
-        self._processMap["checkAccountState"] = Processor.process_checkAccountState
+        account.StandardAccountManagementService.Processor.__init__(self, handler)
         self._processMap["requestLoan"] = Processor.process_requestLoan
 
     def process(self, iprot, oprot):
@@ -139,35 +91,6 @@ class Processor(Iface, TProcessor):
         else:
             self._processMap[name](self, seqid, iprot, oprot)
         return True
-
-    def process_checkAccountState(self, seqid, iprot, oprot):
-        args = checkAccountState_args()
-        args.read(iprot)
-        iprot.readMessageEnd()
-        result = checkAccountState_result()
-        try:
-            result.success = self._handler.checkAccountState(args.authorisationData)
-            msg_type = TMessageType.REPLY
-        except TTransport.TTransportException:
-            raise
-        except UserDoNotExistException as userDoNotExistException:
-            msg_type = TMessageType.REPLY
-            result.userDoNotExistException = userDoNotExistException
-        except InvalidPasswordException as InvalidPasswordException:
-            msg_type = TMessageType.REPLY
-            result.InvalidPasswordException = InvalidPasswordException
-        except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = ex
-        except Exception:
-            logging.exception('Unexpected exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("checkAccountState", msg_type, seqid)
-        result.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
 
     def process_requestLoan(self, seqid, iprot, oprot):
         args = requestLoan_args()
@@ -202,157 +125,6 @@ class Processor(Iface, TProcessor):
         oprot.trans.flush()
 
 # HELPER FUNCTIONS AND STRUCTURES
-
-
-class checkAccountState_args(object):
-    """
-    Attributes:
-     - authorisationData
-
-    """
-
-
-    def __init__(self, authorisationData=None,):
-        self.authorisationData = authorisationData
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.authorisationData = AuthorisationData()
-                    self.authorisationData.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('checkAccountState_args')
-        if self.authorisationData is not None:
-            oprot.writeFieldBegin('authorisationData', TType.STRUCT, 1)
-            self.authorisationData.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(checkAccountState_args)
-checkAccountState_args.thrift_spec = (
-    None,  # 0
-    (1, TType.STRUCT, 'authorisationData', [AuthorisationData, None], None, ),  # 1
-)
-
-
-class checkAccountState_result(object):
-    """
-    Attributes:
-     - success
-     - userDoNotExistException
-     - InvalidPasswordException
-
-    """
-
-
-    def __init__(self, success=None, userDoNotExistException=None, InvalidPasswordException=None,):
-        self.success = success
-        self.userDoNotExistException = userDoNotExistException
-        self.InvalidPasswordException = InvalidPasswordException
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 0:
-                if ftype == TType.STRUCT:
-                    self.success = Account()
-                    self.success.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 1:
-                if ftype == TType.STRUCT:
-                    self.userDoNotExistException = UserDoNotExistException()
-                    self.userDoNotExistException.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.InvalidPasswordException = InvalidPasswordException()
-                    self.InvalidPasswordException.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('checkAccountState_result')
-        if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRUCT, 0)
-            self.success.write(oprot)
-            oprot.writeFieldEnd()
-        if self.userDoNotExistException is not None:
-            oprot.writeFieldBegin('userDoNotExistException', TType.STRUCT, 1)
-            self.userDoNotExistException.write(oprot)
-            oprot.writeFieldEnd()
-        if self.InvalidPasswordException is not None:
-            oprot.writeFieldBegin('InvalidPasswordException', TType.STRUCT, 2)
-            self.InvalidPasswordException.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(checkAccountState_result)
-checkAccountState_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [Account, None], None, ),  # 0
-    (1, TType.STRUCT, 'userDoNotExistException', [UserDoNotExistException, None], None, ),  # 1
-    (2, TType.STRUCT, 'InvalidPasswordException', [InvalidPasswordException, None], None, ),  # 2
-)
 
 
 class requestLoan_args(object):

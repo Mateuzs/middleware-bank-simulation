@@ -23,133 +23,6 @@ ttypes.availableCurrencySet = {
   'HUF' : 4,
   'JPY' : 5
 };
-var Account = module.exports.Account = function(args) {
-  this.name = null;
-  this.surname = null;
-  this.pesel = null;
-  this.password = null;
-  this.accountType = null;
-  this.balance = null;
-  if (args) {
-    if (args.name !== undefined && args.name !== null) {
-      this.name = args.name;
-    }
-    if (args.surname !== undefined && args.surname !== null) {
-      this.surname = args.surname;
-    }
-    if (args.pesel !== undefined && args.pesel !== null) {
-      this.pesel = args.pesel;
-    }
-    if (args.password !== undefined && args.password !== null) {
-      this.password = args.password;
-    }
-    if (args.accountType !== undefined && args.accountType !== null) {
-      this.accountType = args.accountType;
-    }
-    if (args.balance !== undefined && args.balance !== null) {
-      this.balance = args.balance;
-    }
-  }
-};
-Account.prototype = {};
-Account.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true) {
-    var ret = input.readFieldBegin();
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid) {
-      case 1:
-      if (ftype == Thrift.Type.STRING) {
-        this.name = input.readString();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.STRING) {
-        this.surname = input.readString();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
-      if (ftype == Thrift.Type.STRING) {
-        this.pesel = input.readString();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 4:
-      if (ftype == Thrift.Type.STRING) {
-        this.password = input.readString();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 5:
-      if (ftype == Thrift.Type.I32) {
-        this.accountType = input.readI32();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 6:
-      if (ftype == Thrift.Type.DOUBLE) {
-        this.balance = input.readDouble();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-Account.prototype.write = function(output) {
-  output.writeStructBegin('Account');
-  if (this.name !== null && this.name !== undefined) {
-    output.writeFieldBegin('name', Thrift.Type.STRING, 1);
-    output.writeString(this.name);
-    output.writeFieldEnd();
-  }
-  if (this.surname !== null && this.surname !== undefined) {
-    output.writeFieldBegin('surname', Thrift.Type.STRING, 2);
-    output.writeString(this.surname);
-    output.writeFieldEnd();
-  }
-  if (this.pesel !== null && this.pesel !== undefined) {
-    output.writeFieldBegin('pesel', Thrift.Type.STRING, 3);
-    output.writeString(this.pesel);
-    output.writeFieldEnd();
-  }
-  if (this.password !== null && this.password !== undefined) {
-    output.writeFieldBegin('password', Thrift.Type.STRING, 4);
-    output.writeString(this.password);
-    output.writeFieldEnd();
-  }
-  if (this.accountType !== null && this.accountType !== undefined) {
-    output.writeFieldBegin('accountType', Thrift.Type.I32, 5);
-    output.writeI32(this.accountType);
-    output.writeFieldEnd();
-  }
-  if (this.balance !== null && this.balance !== undefined) {
-    output.writeFieldBegin('balance', Thrift.Type.DOUBLE, 6);
-    output.writeDouble(this.balance);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
 var CreateAccountRequest = module.exports.CreateAccountRequest = function(args) {
   this.name = null;
   this.surname = null;
@@ -387,18 +260,189 @@ AuthorisationData.prototype.write = function(output) {
   return;
 };
 
+var AuthorisationResponse = module.exports.AuthorisationResponse = function(args) {
+  this.message = null;
+  this.accountType = null;
+  if (args) {
+    if (args.message !== undefined && args.message !== null) {
+      this.message = args.message;
+    }
+    if (args.accountType !== undefined && args.accountType !== null) {
+      this.accountType = args.accountType;
+    }
+  }
+};
+AuthorisationResponse.prototype = {};
+AuthorisationResponse.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true) {
+    var ret = input.readFieldBegin();
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid) {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.message = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I32) {
+        this.accountType = input.readI32();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+AuthorisationResponse.prototype.write = function(output) {
+  output.writeStructBegin('AuthorisationResponse');
+  if (this.message !== null && this.message !== undefined) {
+    output.writeFieldBegin('message', Thrift.Type.STRING, 1);
+    output.writeString(this.message);
+    output.writeFieldEnd();
+  }
+  if (this.accountType !== null && this.accountType !== undefined) {
+    output.writeFieldBegin('accountType', Thrift.Type.I32, 2);
+    output.writeI32(this.accountType);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var Account = module.exports.Account = function(args) {
+  this.name = null;
+  this.surname = null;
+  this.authorisationData = null;
+  this.accountType = null;
+  this.balance = null;
+  if (args) {
+    if (args.name !== undefined && args.name !== null) {
+      this.name = args.name;
+    }
+    if (args.surname !== undefined && args.surname !== null) {
+      this.surname = args.surname;
+    }
+    if (args.authorisationData !== undefined && args.authorisationData !== null) {
+      this.authorisationData = new ttypes.AuthorisationData(args.authorisationData);
+    }
+    if (args.accountType !== undefined && args.accountType !== null) {
+      this.accountType = args.accountType;
+    }
+    if (args.balance !== undefined && args.balance !== null) {
+      this.balance = args.balance;
+    }
+  }
+};
+Account.prototype = {};
+Account.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true) {
+    var ret = input.readFieldBegin();
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid) {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.name = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.surname = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.authorisationData = new ttypes.AuthorisationData();
+        this.authorisationData.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I32) {
+        this.accountType = input.readI32();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 5:
+      if (ftype == Thrift.Type.DOUBLE) {
+        this.balance = input.readDouble();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Account.prototype.write = function(output) {
+  output.writeStructBegin('Account');
+  if (this.name !== null && this.name !== undefined) {
+    output.writeFieldBegin('name', Thrift.Type.STRING, 1);
+    output.writeString(this.name);
+    output.writeFieldEnd();
+  }
+  if (this.surname !== null && this.surname !== undefined) {
+    output.writeFieldBegin('surname', Thrift.Type.STRING, 2);
+    output.writeString(this.surname);
+    output.writeFieldEnd();
+  }
+  if (this.authorisationData !== null && this.authorisationData !== undefined) {
+    output.writeFieldBegin('authorisationData', Thrift.Type.STRUCT, 3);
+    this.authorisationData.write(output);
+    output.writeFieldEnd();
+  }
+  if (this.accountType !== null && this.accountType !== undefined) {
+    output.writeFieldBegin('accountType', Thrift.Type.I32, 4);
+    output.writeI32(this.accountType);
+    output.writeFieldEnd();
+  }
+  if (this.balance !== null && this.balance !== undefined) {
+    output.writeFieldBegin('balance', Thrift.Type.DOUBLE, 5);
+    output.writeDouble(this.balance);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 var LoanRequest = module.exports.LoanRequest = function(args) {
-  this.pesel = null;
-  this.password = null;
+  this.authorisationData = null;
   this.currency = null;
   this.amount = null;
   this.monthsPeriod = null;
   if (args) {
-    if (args.pesel !== undefined && args.pesel !== null) {
-      this.pesel = args.pesel;
-    }
-    if (args.password !== undefined && args.password !== null) {
-      this.password = args.password;
+    if (args.authorisationData !== undefined && args.authorisationData !== null) {
+      this.authorisationData = new ttypes.AuthorisationData(args.authorisationData);
     }
     if (args.currency !== undefined && args.currency !== null) {
       this.currency = args.currency;
@@ -423,34 +467,28 @@ LoanRequest.prototype.read = function(input) {
     }
     switch (fid) {
       case 1:
-      if (ftype == Thrift.Type.STRING) {
-        this.pesel = input.readString();
+      if (ftype == Thrift.Type.STRUCT) {
+        this.authorisationData = new ttypes.AuthorisationData();
+        this.authorisationData.read(input);
       } else {
         input.skip(ftype);
       }
       break;
       case 2:
-      if (ftype == Thrift.Type.STRING) {
-        this.password = input.readString();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
       if (ftype == Thrift.Type.I32) {
         this.currency = input.readI32();
       } else {
         input.skip(ftype);
       }
       break;
-      case 4:
+      case 3:
       if (ftype == Thrift.Type.DOUBLE) {
         this.amount = input.readDouble();
       } else {
         input.skip(ftype);
       }
       break;
-      case 5:
+      case 4:
       if (ftype == Thrift.Type.I64) {
         this.monthsPeriod = input.readI64();
       } else {
@@ -468,28 +506,23 @@ LoanRequest.prototype.read = function(input) {
 
 LoanRequest.prototype.write = function(output) {
   output.writeStructBegin('LoanRequest');
-  if (this.pesel !== null && this.pesel !== undefined) {
-    output.writeFieldBegin('pesel', Thrift.Type.STRING, 1);
-    output.writeString(this.pesel);
-    output.writeFieldEnd();
-  }
-  if (this.password !== null && this.password !== undefined) {
-    output.writeFieldBegin('password', Thrift.Type.STRING, 2);
-    output.writeString(this.password);
+  if (this.authorisationData !== null && this.authorisationData !== undefined) {
+    output.writeFieldBegin('authorisationData', Thrift.Type.STRUCT, 1);
+    this.authorisationData.write(output);
     output.writeFieldEnd();
   }
   if (this.currency !== null && this.currency !== undefined) {
-    output.writeFieldBegin('currency', Thrift.Type.I32, 3);
+    output.writeFieldBegin('currency', Thrift.Type.I32, 2);
     output.writeI32(this.currency);
     output.writeFieldEnd();
   }
   if (this.amount !== null && this.amount !== undefined) {
-    output.writeFieldBegin('amount', Thrift.Type.DOUBLE, 4);
+    output.writeFieldBegin('amount', Thrift.Type.DOUBLE, 3);
     output.writeDouble(this.amount);
     output.writeFieldEnd();
   }
   if (this.monthsPeriod !== null && this.monthsPeriod !== undefined) {
-    output.writeFieldBegin('monthsPeriod', Thrift.Type.I64, 5);
+    output.writeFieldBegin('monthsPeriod', Thrift.Type.I64, 4);
     output.writeI64(this.monthsPeriod);
     output.writeFieldEnd();
   }
@@ -501,10 +534,11 @@ LoanRequest.prototype.write = function(output) {
 var LoanOffer = module.exports.LoanOffer = function(args) {
   this.currency = null;
   this.amount = null;
-  this.constInRequestedCurrency = null;
+  this.costInRequestedCurrency = null;
   this.costInNativeCurrency = null;
   this.totalAmountToPay = null;
-  this.installment = null;
+  this.installmentInRequestedCurrency = null;
+  this.installmentInNativeCurrency = null;
   if (args) {
     if (args.currency !== undefined && args.currency !== null) {
       this.currency = args.currency;
@@ -512,8 +546,8 @@ var LoanOffer = module.exports.LoanOffer = function(args) {
     if (args.amount !== undefined && args.amount !== null) {
       this.amount = args.amount;
     }
-    if (args.constInRequestedCurrency !== undefined && args.constInRequestedCurrency !== null) {
-      this.constInRequestedCurrency = args.constInRequestedCurrency;
+    if (args.costInRequestedCurrency !== undefined && args.costInRequestedCurrency !== null) {
+      this.costInRequestedCurrency = args.costInRequestedCurrency;
     }
     if (args.costInNativeCurrency !== undefined && args.costInNativeCurrency !== null) {
       this.costInNativeCurrency = args.costInNativeCurrency;
@@ -521,8 +555,11 @@ var LoanOffer = module.exports.LoanOffer = function(args) {
     if (args.totalAmountToPay !== undefined && args.totalAmountToPay !== null) {
       this.totalAmountToPay = args.totalAmountToPay;
     }
-    if (args.installment !== undefined && args.installment !== null) {
-      this.installment = args.installment;
+    if (args.installmentInRequestedCurrency !== undefined && args.installmentInRequestedCurrency !== null) {
+      this.installmentInRequestedCurrency = args.installmentInRequestedCurrency;
+    }
+    if (args.installmentInNativeCurrency !== undefined && args.installmentInNativeCurrency !== null) {
+      this.installmentInNativeCurrency = args.installmentInNativeCurrency;
     }
   }
 };
@@ -553,7 +590,7 @@ LoanOffer.prototype.read = function(input) {
       break;
       case 3:
       if (ftype == Thrift.Type.DOUBLE) {
-        this.constInRequestedCurrency = input.readDouble();
+        this.costInRequestedCurrency = input.readDouble();
       } else {
         input.skip(ftype);
       }
@@ -574,7 +611,14 @@ LoanOffer.prototype.read = function(input) {
       break;
       case 6:
       if (ftype == Thrift.Type.DOUBLE) {
-        this.installment = input.readDouble();
+        this.installmentInRequestedCurrency = input.readDouble();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 7:
+      if (ftype == Thrift.Type.DOUBLE) {
+        this.installmentInNativeCurrency = input.readDouble();
       } else {
         input.skip(ftype);
       }
@@ -600,9 +644,9 @@ LoanOffer.prototype.write = function(output) {
     output.writeDouble(this.amount);
     output.writeFieldEnd();
   }
-  if (this.constInRequestedCurrency !== null && this.constInRequestedCurrency !== undefined) {
-    output.writeFieldBegin('constInRequestedCurrency', Thrift.Type.DOUBLE, 3);
-    output.writeDouble(this.constInRequestedCurrency);
+  if (this.costInRequestedCurrency !== null && this.costInRequestedCurrency !== undefined) {
+    output.writeFieldBegin('costInRequestedCurrency', Thrift.Type.DOUBLE, 3);
+    output.writeDouble(this.costInRequestedCurrency);
     output.writeFieldEnd();
   }
   if (this.costInNativeCurrency !== null && this.costInNativeCurrency !== undefined) {
@@ -615,9 +659,14 @@ LoanOffer.prototype.write = function(output) {
     output.writeDouble(this.totalAmountToPay);
     output.writeFieldEnd();
   }
-  if (this.installment !== null && this.installment !== undefined) {
-    output.writeFieldBegin('installment', Thrift.Type.DOUBLE, 6);
-    output.writeDouble(this.installment);
+  if (this.installmentInRequestedCurrency !== null && this.installmentInRequestedCurrency !== undefined) {
+    output.writeFieldBegin('installmentInRequestedCurrency', Thrift.Type.DOUBLE, 6);
+    output.writeDouble(this.installmentInRequestedCurrency);
+    output.writeFieldEnd();
+  }
+  if (this.installmentInNativeCurrency !== null && this.installmentInNativeCurrency !== undefined) {
+    output.writeFieldBegin('installmentInNativeCurrency', Thrift.Type.DOUBLE, 7);
+    output.writeDouble(this.installmentInNativeCurrency);
     output.writeFieldEnd();
   }
   output.writeFieldStop();

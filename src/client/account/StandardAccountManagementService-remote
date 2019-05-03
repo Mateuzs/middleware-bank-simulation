@@ -24,6 +24,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
+    print('  AuthorisationResponse authoriseUser(AuthorisationData authorisationData)')
     print('  Account checkAccountState(AuthorisationData authorisationData)')
     print('')
     sys.exit(0)
@@ -104,7 +105,13 @@ protocol = TBinaryProtocol(transport)
 client = StandardAccountManagementService.Client(protocol)
 transport.open()
 
-if cmd == 'checkAccountState':
+if cmd == 'authoriseUser':
+    if len(args) != 1:
+        print('authoriseUser requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.authoriseUser(eval(args[0]),))
+
+elif cmd == 'checkAccountState':
     if len(args) != 1:
         print('checkAccountState requires 1 args')
         sys.exit(1)

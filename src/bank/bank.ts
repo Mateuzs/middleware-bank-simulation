@@ -1,5 +1,3 @@
-"use strict";
-
 import {
   CurrencyType,
   availableCurrencyType,
@@ -11,10 +9,10 @@ import { parse } from "url";
 import { getFreshCurrencyRate, launchCurrencyService } from "./currencyService";
 
 import AccountStorage from "./AccountStorage";
-import accountCreationServiceHandler from "./accountCreationServiceHandler";
-import premiumAccountManagementServiceHandler from "./premiumAccountManagementServiceHandler";
-import standardAccountManagementServiceHandler from "./standardAccountManagementServiceHandler";
-import { Server } from "http";
+import createAccount from "./createAccount";
+import requestLoan from "./requestLoan";
+import checkAccountState from "./checkAccountState";
+import authoriseUser from "./authoriseUser";
 
 const thrift = require("thrift");
 const AccountCreationService = require("../thrift/gen-nodejs/AccountCreationService");
@@ -37,7 +35,9 @@ console.log("Bank has been subscribed to currency service");
 const accountCreationserver = thrift
   .createServer(
     AccountCreationService,
-    accountCreationServiceHandler(accountStorage),
+    {
+      createAccount: createAccount(accountStorage)
+    },
     {
       protocol: thrift.TBinaryProtocol,
       transport: thrift.TBufferedTransport
@@ -48,16 +48,21 @@ console.log("Simple server running on " + bankAccountCreationServicePort);
 
 // multiplex Server
 const processor = new thrift.MultiplexedProcessor();
-// processor.registerProcessor(
-//   "PremiumAccountManagenentService",
-//   premiumAccountManagementServiceHandler(accountStorage)
-// );
 
 processor.registerProcessor(
   "StandardAccountManagementService",
-  new StandardAccountManagementService.Processor(
-    standardAccountManagementServiceHandler(accountStorage)
-  )
+  new StandardAccountManagementService.Processor({
+    authoriseUser: authoriseUser(accountStorage),
+    checkAccountState: checkAccountState(accountStorage)
+  })
+);
+processor.registerProcessor(
+  "PremiumAccountManagenentService",
+  new PremiumAccountManagenentService.Processor({
+    authoriseUser: authoriseUser(accountStorage),
+    checkAccountState: checkAccountState(accountStorage),
+    requestLoan: requestLoan(accountStorage)
+  })
 );
 
 const maintenanceServer = thrift

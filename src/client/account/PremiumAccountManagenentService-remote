@@ -24,8 +24,9 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
-    print('  Account checkAccountState(AuthorisationData authorisationData)')
     print('  LoanOffer requestLoan(LoanRequest loanRequest)')
+    print('  AuthorisationResponse authoriseUser(AuthorisationData authorisationData)')
+    print('  Account checkAccountState(AuthorisationData authorisationData)')
     print('')
     sys.exit(0)
 
@@ -105,17 +106,23 @@ protocol = TBinaryProtocol(transport)
 client = PremiumAccountManagenentService.Client(protocol)
 transport.open()
 
-if cmd == 'checkAccountState':
-    if len(args) != 1:
-        print('checkAccountState requires 1 args')
-        sys.exit(1)
-    pp.pprint(client.checkAccountState(eval(args[0]),))
-
-elif cmd == 'requestLoan':
+if cmd == 'requestLoan':
     if len(args) != 1:
         print('requestLoan requires 1 args')
         sys.exit(1)
     pp.pprint(client.requestLoan(eval(args[0]),))
+
+elif cmd == 'authoriseUser':
+    if len(args) != 1:
+        print('authoriseUser requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.authoriseUser(eval(args[0]),))
+
+elif cmd == 'checkAccountState':
+    if len(args) != 1:
+        print('checkAccountState requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.checkAccountState(eval(args[0]),))
 
 else:
     print('Unrecognized method %s' % cmd)

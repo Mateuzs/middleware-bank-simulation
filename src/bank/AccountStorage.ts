@@ -1,4 +1,4 @@
-import { AccountDatabase, AccountObject } from "../types/AccountStorage";
+import { AccountDatabase, Account } from "../types/AccountStorage";
 
 export default class AccountStorage {
   private database: AccountDatabase;
@@ -11,11 +11,11 @@ export default class AccountStorage {
     return Object.keys(this.database).includes(pesel);
   }
 
-  public saveNewAccount(pesel: string, account: AccountObject): void {
+  public saveNewAccount(pesel: string, account: Account): void {
     this.database[pesel] = account;
   }
 
-  public getAccountState(pesel: string): AccountObject {
+  public getAccountState(pesel: string): Account {
     return this.database[pesel];
   }
 }

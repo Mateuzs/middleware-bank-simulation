@@ -1,6 +1,8 @@
+import { availableCurrencyType } from "./currency";
+
 export const enum AccountType {
-  STANDARD = "STANDARD",
-  PREMIUM = "PREMIUM"
+  STANDARD,
+  PREMIUM
 }
 
 export interface CreateAccountRequest {
@@ -19,4 +21,26 @@ export interface AccountCreatedResponse {
 export interface AuthorisationData {
   pesel: string;
   password: string;
+}
+
+export interface AuthorisationResponse {
+  message: string;
+  accountType: AccountType;
+}
+
+export interface LoanRequest {
+  authorisationData: AuthorisationData;
+  currency: availableCurrencyType;
+  amount: number;
+  monthsPeriod: number;
+}
+
+export interface LoanOffer {
+  currency: availableCurrencyType;
+  amount: number;
+  costInRequestedCurrency: number;
+  costInNativeCurrency: number;
+  totalAmountToPay: number;
+  installmentInRequestedCurrency: number;
+  installmentInNativeCurrency: number;
 }

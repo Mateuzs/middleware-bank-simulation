@@ -5,7 +5,7 @@ import { CurrencyType, CurrencyTypes } from "../types/currency";
 const grpc = require("grpc");
 const protoLoader = require("@grpc/proto-loader");
 const PROTO_PATH = __dirname + "/../protos/currency.proto";
-// Suggested options for similarity to existing grpc.load behavior
+
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -14,13 +14,17 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true
 });
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-// The protoDescriptor object has the full package hierarchy
+
 const currency = protoDescriptor.currency;
 
 const currencyTable = new CurrencyTable();
 
-async function getCurrencyRates(call) {
+async function getCurrencyRates(call: any) {
+  console.log("\nAnother bank subscriebed, requested currencies: ");
   const requiredCurrencies = call.request.currencies;
+
+  console.log(requiredCurrencies);
+
   while (true) {
     const presentCurrencyRate = currencyTable.getRequiredCurrencyRates(
       requiredCurrencies
@@ -38,14 +42,15 @@ function getServer() {
   return server;
 }
 
-function sleep(ms) {
+function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+const host = process.argv[2];
+const port = process.argv[3];
 
-const port = process.argv[2];
 const currencyService = getServer();
 currencyService.bind(
-  `0.0.0.0:${port}`,
+  `${host}:${port}`,
   grpc.ServerCredentials.createInsecure()
 );
 currencyService.start();

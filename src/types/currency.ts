@@ -1,4 +1,4 @@
-export const enum availableCurrencyType {
+export enum availableCurrencyType {
   PLN = "PLN",
   EUR = "EUR",
   USD = "USD",
@@ -13,6 +13,11 @@ export interface CurrencyTypes {
 export interface CurrencyType {
   currency: availableCurrencyType;
 }
+
+export interface CurrencyRates {
+  currencies: Currency[];
+}
+
 export interface Currency {
   currency: availableCurrencyType;
   sellRate: number;

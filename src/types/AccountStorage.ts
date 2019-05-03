@@ -1,12 +1,12 @@
-import { AccountType } from "./accountService";
+import { AccountType, AuthorisationData } from "./accountService";
 export interface AccountDatabase {
-  [pesel: string]: AccountObject;
+  [pesel: string]: Account;
 }
 
-export interface AccountObject {
+export interface Account {
   name: string;
   surname: string;
-  password: string;
+  authorisationData: AuthorisationData;
   accountType: AccountType;
   balance: number;
 }

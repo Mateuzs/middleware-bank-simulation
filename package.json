@@ -5,17 +5,19 @@
     "@grpc/proto-loader": "^0.1.0",
     "async": "^1.5.2",
     "google-protobuf": "^3.0.0",
-    "grpc": "^1.11.0",
+    "grpc": "^1.20.2",
     "lodash": "^4.6.1",
     "minimist": "^1.2.0",
     "thrift": "^0.12.0",
     "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.4.5",
+    "crypto-js": "^3.1.9-1"
   },
   "scripts": {
-    "currencyService": "ts-node src/currency/currencyService.ts 50051",
+    "currencyService": "ts-node src/currency/currencyService.ts localhost 50051",
     "bank1": "ts-node src/bank/bank.ts 9001 9002 1 localhost 50051 ",
     "bank2": "ts-node src/bank/bank.ts 10001 10002 2 localhost 50051 ",
-    "client1": "python3 src/client/client.py"
+    "client1": "python3 src/client/client.py --ac_bank_port 9001 --am_bank_port 9002",
+    "client2": "python3 src/client/client.py --ac_bank_port 10001 --am_bank_port 10002"
   }
 }

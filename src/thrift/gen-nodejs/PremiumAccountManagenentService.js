@@ -10,149 +10,11 @@ var Thrift = thrift.Thrift;
 var Q = thrift.Q;
 
 
+var StandardAccountManagementService = require('./StandardAccountManagementService');
+var StandardAccountManagementServiceClient = StandardAccountManagementService.Client;
+var StandardAccountManagementServiceProcessor = StandardAccountManagementService.Processor;
 var ttypes = require('./account_types');
 //HELPER FUNCTIONS AND STRUCTURES
-
-var PremiumAccountManagenentService_checkAccountState_args = function(args) {
-  this.authorisationData = null;
-  if (args) {
-    if (args.authorisationData !== undefined && args.authorisationData !== null) {
-      this.authorisationData = new ttypes.AuthorisationData(args.authorisationData);
-    }
-  }
-};
-PremiumAccountManagenentService_checkAccountState_args.prototype = {};
-PremiumAccountManagenentService_checkAccountState_args.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true) {
-    var ret = input.readFieldBegin();
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid) {
-      case 1:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.authorisationData = new ttypes.AuthorisationData();
-        this.authorisationData.read(input);
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 0:
-        input.skip(ftype);
-        break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-PremiumAccountManagenentService_checkAccountState_args.prototype.write = function(output) {
-  output.writeStructBegin('PremiumAccountManagenentService_checkAccountState_args');
-  if (this.authorisationData !== null && this.authorisationData !== undefined) {
-    output.writeFieldBegin('authorisationData', Thrift.Type.STRUCT, 1);
-    this.authorisationData.write(output);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
-var PremiumAccountManagenentService_checkAccountState_result = function(args) {
-  this.success = null;
-  this.userDoNotExistException = null;
-  this.InvalidPasswordException = null;
-  if (args instanceof ttypes.UserDoNotExistException) {
-    this.userDoNotExistException = args;
-    return;
-  }
-  if (args instanceof ttypes.InvalidPasswordException) {
-    this.InvalidPasswordException = args;
-    return;
-  }
-  if (args) {
-    if (args.success !== undefined && args.success !== null) {
-      this.success = new ttypes.Account(args.success);
-    }
-    if (args.userDoNotExistException !== undefined && args.userDoNotExistException !== null) {
-      this.userDoNotExistException = args.userDoNotExistException;
-    }
-    if (args.InvalidPasswordException !== undefined && args.InvalidPasswordException !== null) {
-      this.InvalidPasswordException = args.InvalidPasswordException;
-    }
-  }
-};
-PremiumAccountManagenentService_checkAccountState_result.prototype = {};
-PremiumAccountManagenentService_checkAccountState_result.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true) {
-    var ret = input.readFieldBegin();
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid) {
-      case 0:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.success = new ttypes.Account();
-        this.success.read(input);
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 1:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.userDoNotExistException = new ttypes.UserDoNotExistException();
-        this.userDoNotExistException.read(input);
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.InvalidPasswordException = new ttypes.InvalidPasswordException();
-        this.InvalidPasswordException.read(input);
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-PremiumAccountManagenentService_checkAccountState_result.prototype.write = function(output) {
-  output.writeStructBegin('PremiumAccountManagenentService_checkAccountState_result');
-  if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.STRUCT, 0);
-    this.success.write(output);
-    output.writeFieldEnd();
-  }
-  if (this.userDoNotExistException !== null && this.userDoNotExistException !== undefined) {
-    output.writeFieldBegin('userDoNotExistException', Thrift.Type.STRUCT, 1);
-    this.userDoNotExistException.write(output);
-    output.writeFieldEnd();
-  }
-  if (this.InvalidPasswordException !== null && this.InvalidPasswordException !== undefined) {
-    output.writeFieldBegin('InvalidPasswordException', Thrift.Type.STRUCT, 2);
-    this.InvalidPasswordException.write(output);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
 
 var PremiumAccountManagenentService_requestLoan_args = function(args) {
   this.loanRequest = null;
@@ -322,74 +184,9 @@ var PremiumAccountManagenentServiceClient = exports.Client = function(output, pC
   this._seqid = 0;
   this._reqs = {};
 };
-PremiumAccountManagenentServiceClient.prototype = {};
+Thrift.inherits(PremiumAccountManagenentServiceClient, StandardAccountManagementServiceClient);
 PremiumAccountManagenentServiceClient.prototype.seqid = function() { return this._seqid; };
 PremiumAccountManagenentServiceClient.prototype.new_seqid = function() { return this._seqid += 1; };
-
-PremiumAccountManagenentServiceClient.prototype.checkAccountState = function(authorisationData, callback) {
-  this._seqid = this.new_seqid();
-  if (callback === undefined) {
-    var _defer = Q.defer();
-    this._reqs[this.seqid()] = function(error, result) {
-      if (error) {
-        _defer.reject(error);
-      } else {
-        _defer.resolve(result);
-      }
-    };
-    this.send_checkAccountState(authorisationData);
-    return _defer.promise;
-  } else {
-    this._reqs[this.seqid()] = callback;
-    this.send_checkAccountState(authorisationData);
-  }
-};
-
-PremiumAccountManagenentServiceClient.prototype.send_checkAccountState = function(authorisationData) {
-  var output = new this.pClass(this.output);
-  var params = {
-    authorisationData: authorisationData
-  };
-  var args = new PremiumAccountManagenentService_checkAccountState_args(params);
-  try {
-    output.writeMessageBegin('checkAccountState', Thrift.MessageType.CALL, this.seqid());
-    args.write(output);
-    output.writeMessageEnd();
-    return this.output.flush();
-  }
-  catch (e) {
-    delete this._reqs[this.seqid()];
-    if (typeof output.reset === 'function') {
-      output.reset();
-    }
-    throw e;
-  }
-};
-
-PremiumAccountManagenentServiceClient.prototype.recv_checkAccountState = function(input,mtype,rseqid) {
-  var callback = this._reqs[rseqid] || function() {};
-  delete this._reqs[rseqid];
-  if (mtype == Thrift.MessageType.EXCEPTION) {
-    var x = new Thrift.TApplicationException();
-    x.read(input);
-    input.readMessageEnd();
-    return callback(x);
-  }
-  var result = new PremiumAccountManagenentService_checkAccountState_result();
-  result.read(input);
-  input.readMessageEnd();
-
-  if (null !== result.userDoNotExistException) {
-    return callback(result.userDoNotExistException);
-  }
-  if (null !== result.InvalidPasswordException) {
-    return callback(result.InvalidPasswordException);
-  }
-  if (null !== result.success) {
-    return callback(null, result.success);
-  }
-  return callback('checkAccountState failed: unknown result');
-};
 
 PremiumAccountManagenentServiceClient.prototype.requestLoan = function(loanRequest, callback) {
   this._seqid = this.new_seqid();
@@ -461,6 +258,7 @@ PremiumAccountManagenentServiceClient.prototype.recv_requestLoan = function(inpu
 var PremiumAccountManagenentServiceProcessor = exports.Processor = function(handler) {
   this._handler = handler;
 };
+Thrift.inherits(PremiumAccountManagenentServiceProcessor, StandardAccountManagementServiceProcessor);
 PremiumAccountManagenentServiceProcessor.prototype.process = function(input, output) {
   var r = input.readMessageBegin();
   if (this['process_' + r.fname]) {
@@ -473,48 +271,6 @@ PremiumAccountManagenentServiceProcessor.prototype.process = function(input, out
     x.write(output);
     output.writeMessageEnd();
     output.flush();
-  }
-};
-PremiumAccountManagenentServiceProcessor.prototype.process_checkAccountState = function(seqid, input, output) {
-  var args = new PremiumAccountManagenentService_checkAccountState_args();
-  args.read(input);
-  input.readMessageEnd();
-  if (this._handler.checkAccountState.length === 1) {
-    Q.fcall(this._handler.checkAccountState.bind(this._handler),
-      args.authorisationData
-    ).then(function(result) {
-      var result_obj = new PremiumAccountManagenentService_checkAccountState_result({success: result});
-      output.writeMessageBegin("checkAccountState", Thrift.MessageType.REPLY, seqid);
-      result_obj.write(output);
-      output.writeMessageEnd();
-      output.flush();
-    }).catch(function (err) {
-      var result;
-      if (err instanceof ttypes.UserDoNotExistException || err instanceof ttypes.InvalidPasswordException) {
-        result = new PremiumAccountManagenentService_checkAccountState_result(err);
-        output.writeMessageBegin("checkAccountState", Thrift.MessageType.REPLY, seqid);
-      } else {
-        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("checkAccountState", Thrift.MessageType.EXCEPTION, seqid);
-      }
-      result.write(output);
-      output.writeMessageEnd();
-      output.flush();
-    });
-  } else {
-    this._handler.checkAccountState(args.authorisationData, function (err, result) {
-      var result_obj;
-      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.UserDoNotExistException || err instanceof ttypes.InvalidPasswordException) {
-        result_obj = new PremiumAccountManagenentService_checkAccountState_result((err !== null || typeof err === 'undefined') ? err : {success: result});
-        output.writeMessageBegin("checkAccountState", Thrift.MessageType.REPLY, seqid);
-      } else {
-        result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("checkAccountState", Thrift.MessageType.EXCEPTION, seqid);
-      }
-      result_obj.write(output);
-      output.writeMessageEnd();
-      output.flush();
-    });
   }
 };
 PremiumAccountManagenentServiceProcessor.prototype.process_requestLoan = function(seqid, input, output) {

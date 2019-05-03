@@ -58,118 +58,6 @@ class availableCurrencySet(object):
     }
 
 
-class Account(object):
-    """
-    Attributes:
-     - name
-     - surname
-     - pesel
-     - password
-     - accountType
-     - balance
-
-    """
-
-
-    def __init__(self, name=None, surname=None, pesel=None, password=None, accountType=None, balance=None,):
-        self.name = name
-        self.surname = surname
-        self.pesel = pesel
-        self.password = password
-        self.accountType = accountType
-        self.balance = balance
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.name = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRING:
-                    self.surname = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.STRING:
-                    self.pesel = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 4:
-                if ftype == TType.STRING:
-                    self.password = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 5:
-                if ftype == TType.I32:
-                    self.accountType = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 6:
-                if ftype == TType.DOUBLE:
-                    self.balance = iprot.readDouble()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('Account')
-        if self.name is not None:
-            oprot.writeFieldBegin('name', TType.STRING, 1)
-            oprot.writeString(self.name.encode('utf-8') if sys.version_info[0] == 2 else self.name)
-            oprot.writeFieldEnd()
-        if self.surname is not None:
-            oprot.writeFieldBegin('surname', TType.STRING, 2)
-            oprot.writeString(self.surname.encode('utf-8') if sys.version_info[0] == 2 else self.surname)
-            oprot.writeFieldEnd()
-        if self.pesel is not None:
-            oprot.writeFieldBegin('pesel', TType.STRING, 3)
-            oprot.writeString(self.pesel.encode('utf-8') if sys.version_info[0] == 2 else self.pesel)
-            oprot.writeFieldEnd()
-        if self.password is not None:
-            oprot.writeFieldBegin('password', TType.STRING, 4)
-            oprot.writeString(self.password.encode('utf-8') if sys.version_info[0] == 2 else self.password)
-            oprot.writeFieldEnd()
-        if self.accountType is not None:
-            oprot.writeFieldBegin('accountType', TType.I32, 5)
-            oprot.writeI32(self.accountType)
-            oprot.writeFieldEnd()
-        if self.balance is not None:
-            oprot.writeFieldBegin('balance', TType.DOUBLE, 6)
-            oprot.writeDouble(self.balance)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
 class CreateAccountRequest(object):
     """
     Attributes:
@@ -407,11 +295,180 @@ class AuthorisationData(object):
         return not (self == other)
 
 
+class AuthorisationResponse(object):
+    """
+    Attributes:
+     - message
+     - accountType
+
+    """
+
+
+    def __init__(self, message=None, accountType=None,):
+        self.message = message
+        self.accountType = accountType
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.message = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.I32:
+                    self.accountType = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('AuthorisationResponse')
+        if self.message is not None:
+            oprot.writeFieldBegin('message', TType.STRING, 1)
+            oprot.writeString(self.message.encode('utf-8') if sys.version_info[0] == 2 else self.message)
+            oprot.writeFieldEnd()
+        if self.accountType is not None:
+            oprot.writeFieldBegin('accountType', TType.I32, 2)
+            oprot.writeI32(self.accountType)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class Account(object):
+    """
+    Attributes:
+     - name
+     - surname
+     - authorisationData
+     - accountType
+     - balance
+
+    """
+
+
+    def __init__(self, name=None, surname=None, authorisationData=None, accountType=None, balance=None,):
+        self.name = name
+        self.surname = surname
+        self.authorisationData = authorisationData
+        self.accountType = accountType
+        self.balance = balance
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.name = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRING:
+                    self.surname = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRUCT:
+                    self.authorisationData = AuthorisationData()
+                    self.authorisationData.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.I32:
+                    self.accountType = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 5:
+                if ftype == TType.DOUBLE:
+                    self.balance = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('Account')
+        if self.name is not None:
+            oprot.writeFieldBegin('name', TType.STRING, 1)
+            oprot.writeString(self.name.encode('utf-8') if sys.version_info[0] == 2 else self.name)
+            oprot.writeFieldEnd()
+        if self.surname is not None:
+            oprot.writeFieldBegin('surname', TType.STRING, 2)
+            oprot.writeString(self.surname.encode('utf-8') if sys.version_info[0] == 2 else self.surname)
+            oprot.writeFieldEnd()
+        if self.authorisationData is not None:
+            oprot.writeFieldBegin('authorisationData', TType.STRUCT, 3)
+            self.authorisationData.write(oprot)
+            oprot.writeFieldEnd()
+        if self.accountType is not None:
+            oprot.writeFieldBegin('accountType', TType.I32, 4)
+            oprot.writeI32(self.accountType)
+            oprot.writeFieldEnd()
+        if self.balance is not None:
+            oprot.writeFieldBegin('balance', TType.DOUBLE, 5)
+            oprot.writeDouble(self.balance)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
 class LoanRequest(object):
     """
     Attributes:
-     - pesel
-     - password
+     - authorisationData
      - currency
      - amount
      - monthsPeriod
@@ -419,9 +476,8 @@ class LoanRequest(object):
     """
 
 
-    def __init__(self, pesel=None, password=None, currency=None, amount=None, monthsPeriod=None,):
-        self.pesel = pesel
-        self.password = password
+    def __init__(self, authorisationData=None, currency=None, amount=None, monthsPeriod=None,):
+        self.authorisationData = authorisationData
         self.currency = currency
         self.amount = amount
         self.monthsPeriod = monthsPeriod
@@ -436,26 +492,22 @@ class LoanRequest(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.STRING:
-                    self.pesel = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                if ftype == TType.STRUCT:
+                    self.authorisationData = AuthorisationData()
+                    self.authorisationData.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.STRING:
-                    self.password = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
                 if ftype == TType.I32:
                     self.currency = iprot.readI32()
                 else:
                     iprot.skip(ftype)
-            elif fid == 4:
+            elif fid == 3:
                 if ftype == TType.DOUBLE:
                     self.amount = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
-            elif fid == 5:
+            elif fid == 4:
                 if ftype == TType.I64:
                     self.monthsPeriod = iprot.readI64()
                 else:
@@ -470,24 +522,20 @@ class LoanRequest(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('LoanRequest')
-        if self.pesel is not None:
-            oprot.writeFieldBegin('pesel', TType.STRING, 1)
-            oprot.writeString(self.pesel.encode('utf-8') if sys.version_info[0] == 2 else self.pesel)
-            oprot.writeFieldEnd()
-        if self.password is not None:
-            oprot.writeFieldBegin('password', TType.STRING, 2)
-            oprot.writeString(self.password.encode('utf-8') if sys.version_info[0] == 2 else self.password)
+        if self.authorisationData is not None:
+            oprot.writeFieldBegin('authorisationData', TType.STRUCT, 1)
+            self.authorisationData.write(oprot)
             oprot.writeFieldEnd()
         if self.currency is not None:
-            oprot.writeFieldBegin('currency', TType.I32, 3)
+            oprot.writeFieldBegin('currency', TType.I32, 2)
             oprot.writeI32(self.currency)
             oprot.writeFieldEnd()
         if self.amount is not None:
-            oprot.writeFieldBegin('amount', TType.DOUBLE, 4)
+            oprot.writeFieldBegin('amount', TType.DOUBLE, 3)
             oprot.writeDouble(self.amount)
             oprot.writeFieldEnd()
         if self.monthsPeriod is not None:
-            oprot.writeFieldBegin('monthsPeriod', TType.I64, 5)
+            oprot.writeFieldBegin('monthsPeriod', TType.I64, 4)
             oprot.writeI64(self.monthsPeriod)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -513,21 +561,23 @@ class LoanOffer(object):
     Attributes:
      - currency
      - amount
-     - constInRequestedCurrency
+     - costInRequestedCurrency
      - costInNativeCurrency
      - totalAmountToPay
-     - installment
+     - installmentInRequestedCurrency
+     - installmentInNativeCurrency
 
     """
 
 
-    def __init__(self, currency=None, amount=None, constInRequestedCurrency=None, costInNativeCurrency=None, totalAmountToPay=None, installment=None,):
+    def __init__(self, currency=None, amount=None, costInRequestedCurrency=None, costInNativeCurrency=None, totalAmountToPay=None, installmentInRequestedCurrency=None, installmentInNativeCurrency=None,):
         self.currency = currency
         self.amount = amount
-        self.constInRequestedCurrency = constInRequestedCurrency
+        self.costInRequestedCurrency = costInRequestedCurrency
         self.costInNativeCurrency = costInNativeCurrency
         self.totalAmountToPay = totalAmountToPay
-        self.installment = installment
+        self.installmentInRequestedCurrency = installmentInRequestedCurrency
+        self.installmentInNativeCurrency = installmentInNativeCurrency
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -550,7 +600,7 @@ class LoanOffer(object):
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.DOUBLE:
-                    self.constInRequestedCurrency = iprot.readDouble()
+                    self.costInRequestedCurrency = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
@@ -565,7 +615,12 @@ class LoanOffer(object):
                     iprot.skip(ftype)
             elif fid == 6:
                 if ftype == TType.DOUBLE:
-                    self.installment = iprot.readDouble()
+                    self.installmentInRequestedCurrency = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 7:
+                if ftype == TType.DOUBLE:
+                    self.installmentInNativeCurrency = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -586,9 +641,9 @@ class LoanOffer(object):
             oprot.writeFieldBegin('amount', TType.DOUBLE, 2)
             oprot.writeDouble(self.amount)
             oprot.writeFieldEnd()
-        if self.constInRequestedCurrency is not None:
-            oprot.writeFieldBegin('constInRequestedCurrency', TType.DOUBLE, 3)
-            oprot.writeDouble(self.constInRequestedCurrency)
+        if self.costInRequestedCurrency is not None:
+            oprot.writeFieldBegin('costInRequestedCurrency', TType.DOUBLE, 3)
+            oprot.writeDouble(self.costInRequestedCurrency)
             oprot.writeFieldEnd()
         if self.costInNativeCurrency is not None:
             oprot.writeFieldBegin('costInNativeCurrency', TType.DOUBLE, 4)
@@ -598,9 +653,13 @@ class LoanOffer(object):
             oprot.writeFieldBegin('totalAmountToPay', TType.DOUBLE, 5)
             oprot.writeDouble(self.totalAmountToPay)
             oprot.writeFieldEnd()
-        if self.installment is not None:
-            oprot.writeFieldBegin('installment', TType.DOUBLE, 6)
-            oprot.writeDouble(self.installment)
+        if self.installmentInRequestedCurrency is not None:
+            oprot.writeFieldBegin('installmentInRequestedCurrency', TType.DOUBLE, 6)
+            oprot.writeDouble(self.installmentInRequestedCurrency)
+            oprot.writeFieldEnd()
+        if self.installmentInNativeCurrency is not None:
+            oprot.writeFieldBegin('installmentInNativeCurrency', TType.DOUBLE, 7)
+            oprot.writeDouble(self.installmentInNativeCurrency)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -902,16 +961,6 @@ class InvalidPasswordException(TException):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(Account)
-Account.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
-    (2, TType.STRING, 'surname', 'UTF8', None, ),  # 2
-    (3, TType.STRING, 'pesel', 'UTF8', None, ),  # 3
-    (4, TType.STRING, 'password', 'UTF8', None, ),  # 4
-    (5, TType.I32, 'accountType', None, None, ),  # 5
-    (6, TType.DOUBLE, 'balance', None, None, ),  # 6
-)
 all_structs.append(CreateAccountRequest)
 CreateAccountRequest.thrift_spec = (
     None,  # 0
@@ -933,24 +982,39 @@ AuthorisationData.thrift_spec = (
     (1, TType.STRING, 'pesel', 'UTF8', None, ),  # 1
     (2, TType.STRING, 'password', 'UTF8', None, ),  # 2
 )
+all_structs.append(AuthorisationResponse)
+AuthorisationResponse.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'message', 'UTF8', None, ),  # 1
+    (2, TType.I32, 'accountType', None, None, ),  # 2
+)
+all_structs.append(Account)
+Account.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
+    (2, TType.STRING, 'surname', 'UTF8', None, ),  # 2
+    (3, TType.STRUCT, 'authorisationData', [AuthorisationData, None], None, ),  # 3
+    (4, TType.I32, 'accountType', None, None, ),  # 4
+    (5, TType.DOUBLE, 'balance', None, None, ),  # 5
+)
 all_structs.append(LoanRequest)
 LoanRequest.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'pesel', 'UTF8', None, ),  # 1
-    (2, TType.STRING, 'password', 'UTF8', None, ),  # 2
-    (3, TType.I32, 'currency', None, None, ),  # 3
-    (4, TType.DOUBLE, 'amount', None, None, ),  # 4
-    (5, TType.I64, 'monthsPeriod', None, None, ),  # 5
+    (1, TType.STRUCT, 'authorisationData', [AuthorisationData, None], None, ),  # 1
+    (2, TType.I32, 'currency', None, None, ),  # 2
+    (3, TType.DOUBLE, 'amount', None, None, ),  # 3
+    (4, TType.I64, 'monthsPeriod', None, None, ),  # 4
 )
 all_structs.append(LoanOffer)
 LoanOffer.thrift_spec = (
     None,  # 0
     (1, TType.I32, 'currency', None, None, ),  # 1
     (2, TType.DOUBLE, 'amount', None, None, ),  # 2
-    (3, TType.DOUBLE, 'constInRequestedCurrency', None, None, ),  # 3
+    (3, TType.DOUBLE, 'costInRequestedCurrency', None, None, ),  # 3
     (4, TType.DOUBLE, 'costInNativeCurrency', None, None, ),  # 4
     (5, TType.DOUBLE, 'totalAmountToPay', None, None, ),  # 5
-    (6, TType.DOUBLE, 'installment', None, None, ),  # 6
+    (6, TType.DOUBLE, 'installmentInRequestedCurrency', None, None, ),  # 6
+    (7, TType.DOUBLE, 'installmentInNativeCurrency', None, None, ),  # 7
 )
 all_structs.append(CurrencyNotAvailableException)
 CurrencyNotAvailableException.thrift_spec = (
